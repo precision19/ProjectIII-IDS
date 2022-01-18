@@ -70,6 +70,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'trydjango.wsgi.application'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'document')
+
+MEDIA_URL = '/document/'
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
