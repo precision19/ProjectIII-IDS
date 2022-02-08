@@ -13,7 +13,12 @@
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     <input type="file" name="data" id="data" required="required" style="padding-bottom: 15px">
-
+                    <select name = "drop1" >
+                      <option value="svm">SVM</option>
+                      <option value="linear">Linear</option>
+                      <option value="random_forest">Random Forest</option>
+                
+                    </select>
                     <button id="submit" class="btn-primary">Upload</button>
 
                 </form>

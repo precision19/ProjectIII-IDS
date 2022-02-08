@@ -11,6 +11,7 @@ def index(request):
 def upload(request):
     context = {}
     if request.method == 'POST':
+        print(request.POST['drop1'])
         upload_file = request.FILES['data']
         if upload_file.name.endswith('.csv'):
             savefile = FileSystemStorage()
