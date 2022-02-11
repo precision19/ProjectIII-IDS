@@ -1,6 +1,36 @@
 {% extends "pages/base.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Prediction Results</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h5>Prediction Input:</h5>
+                <div>Duration: <span id="dr"></span></div>
+                <div>Protocol: <span id="pr"></span></div>
+                <div>Service: <span id="se"></span></div>
+                <div>Flag: <span id="fl"></span></div>
+                <div>Src_bytes: <span id="sr"></span></div>
+                <div>Dst_bytes: <span id="ds"></span></div>
+                <h5 class="pt-3">Prediction Classification:</h5>
+                <div id="prediction"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a class="btn btn-primary" href="/results" role="button">View DB</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <h1  style = "color: #fff">Predict data</h1>
 <div class="container pt-5">
     <div class="row justify-content-md-center">
@@ -14,15 +44,15 @@
                 </div>
                 <div class="form-group">
                     <label for="protocol">protocol</label>
-                    <input type="number" step="0.1" class="form-control" id="protocol" placeholder="" required>
+                    <input type="text" step="0.1" class="form-control" id="protocol" placeholder="" required>
                 </div>
                 <div class="form-group">
                     <label for="service">service</label>
-                    <input type="number" step="0.1" class="form-control" id="service" placeholder="" required>
+                    <input type="text" step="0.1" class="form-control" id="service" placeholder="" required>
                 </div>
                 <div class="form-group">
                     <label for="flag">flag</label>
-                    <input type="number" step="0.1" class="form-control" id="flag" placeholder="" required>
+                    <input type="text" step="0.1" class="form-control" id="flag" placeholder="" required>
                 </div>
 
                 <div class="form-group">
@@ -35,134 +65,42 @@
                     <input type="number" step="0.1" class="form-control" id="dst_bytes" placeholder="" required>
                 </div>
 
-                <div class="form-group">
-                    <label for="land">land</label>
-                    <input type="number" step="0.1" class="form-control" id="land" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="wrong_fragments">wrong_fragments</label>
-                    <input type="number" step="0.1" class="form-control" id="wrong_fragments" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="urgent">urgent</label>
-                    <input type="number" step="0.1" class="form-control" id="urgent" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="hot">hot</label>
-                    <input type="number" step="0.1" class="form-control" id="hot" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="num_failed_logins">num_failed_logins</label>
-                    <input type="number" step="0.1" class="form-control" id="num_failed_logins" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="logged_in">logged_in</label>
-                    <input type="number" step="0.1" class="form-control" id="logged_in" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="num_compromise">num_compromise</label>
-                    <input type="number" step="0.1" class="form-control" id="num_compromise" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="root_shell">root_shell</label>
-                    <input type="number" step="0.1" class="form-control" id="root_shell" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="su_attempted">su_attempted</label>
-                    <input type="number" step="0.1" class="form-control" id="su_attempted" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="num_root">num_root</label>
-                    <input type="number" step="0.1" class="form-control" id="num_root" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="num_file_creations">num_file_creations</label>
-                    <input type="number" step="0.1" class="form-control" id="num_file_creations" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="num_shell">num_shell</label>
-                    <input type="number" step="0.1" class="form-control" id="num_shell" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="num_access_file">num_access_file</label>
-                    <input type="number" step="0.1" class="form-control" id="num_access_file" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="num_outbound_cmd">num_outbound_cmd</label>
-                    <input type="number" step="0.1" class="form-control" id="num_outbound_cmd" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="is_hot_login">is_hot_login</label>
-                    <input type="number" step="0.1" class="form-control" id="is_hot_login" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="is_guest_login">is_guest_login</label>
-                    <input type="number" step="0.1" class="form-control" id="is_guest_login" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="count">count</label>
-                    <input type="number" step="0.1" class="form-control" id="count" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="srv_count">srv_count</label>
-                    <input type="number" step="0.1" class="form-control" id="srv_count" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="serror_rate">serror_rate</label>
-                    <input type="number" step="0.1" class="form-control" id="serror_rate" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="srv_serror_rate">srv_serror_rate</label>
-                    <input type="number" step="0.1" class="form-control" id="srv_serror_rate" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="rerror_rate">rerror_rate</label>
-                    <input type="number" step="0.1" class="form-control" id="rerror_rate" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="srv_rerror_rate">srv_rerror_rate</label>
-                    <input type="number" step="0.1" class="form-control" id="srv_rerror_rate" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="same_srv_rate">same_srv_rate</label>
-                    <input type="number" step="0.1" class="form-control" id="same_srv_rate" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="diff_srv_rate">diff_srv_rate</label>
-                    <input type="number" step="0.1" class="form-control" id="diff_srv_rate" placeholder="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="srv_diff_host_rate">srv_diff_host_rate</label>
-                    <input type="number" step="0.1" class="form-control" id="srv_diff_host_rate" placeholder="" required>
-                </div>
-
                 <button type="submit" value="Submit" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Submit</button>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    $(document).on('submit', '#post-form',function(e){
+        e.preventDefault();
+        $.ajax({
+            type:'POST',
+            url:'{% url "predict" %}',
+            data:{
+                duration:$('#duration').val(),
+                protocol:$('#protocol').val(),
+                service:$('#service').val(),
+                flag:$('#flag').val(),
+                src_bytes:$('#src_bytes').val(),
+                dst_bytes:$('#dst_bytes').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                action: 'post'
+            },  
+            success:function(json) {
+                document.forms["post-form"].reset();
+                document.getElementById("prediction").innerHTML = json['result']
+                document.getElementById("dr").innerHTML = json['protocol']
+                document.getElementById("pr").innerHTML = json['service']
+                document.getElementById("se").innerHTML = json['service']
+                document.getElementById("fl").innerHTML = json['flag']
+                document.getElementById("sr").innerHTML = json['src_bytes']
+                document.getElementById("ds").innerHTML = json['dst_bytes']
+            },
+            error : function(xhr,errmsg,err) {
+
+            }
+        });
+    })
+</script>
 {% endblock %}
