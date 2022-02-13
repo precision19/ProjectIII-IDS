@@ -5,12 +5,14 @@ import os
 import csv
 import pandas as pd
 import numpy as np
+from scipy.fft import dst
 from sklearn import preprocessing, svm
 from sklearn import model_selection
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
 # Create your views here.
 
 def index(request):
@@ -127,7 +129,7 @@ def upload(request):
             pd.to_pickle(binary_model, r'./model.pickle')
             print(base_rf_score)
         else:
-            binary_model = LogisticRegression()
+            binary_model = KNeighborsClassifier(n_neighbors = 2)
             binary_model.fit(binary_train_X, binary_train_y)
             binary_predictions = binary_model.predict(binary_val_X)
 
@@ -138,10 +140,90 @@ def upload(request):
         
     return render(request, 'pages/upload.html', context)
 def predict(request):
-    print(request.POST.get('action'))
         # duration = float(request.POST.get('duration'))
         # print(duration)
     # model = pd.read_pickle(r'./model.pickle')
 
     # output = model.predict()
-    return render(request, 'pages/predict.html')
+    context = {}
+    if request.method == 'POST':
+
+        df = pd.read_csv("document/data.csv")
+        columns = (['duration'
+        ,'protocol_type'
+        ,'service'
+        ,'flag'
+        ,'src_bytes'
+        ,'dst_bytes'
+        ,'land'
+        ,'wrong_fragment'
+        ,'urgent'
+        ,'hot'
+        ,'num_failed_logins'
+        ,'logged_in'
+        ,'num_compromised'
+        ,'root_shell'
+        ,'su_attempted'
+        ,'num_root'
+        ,'num_file_creations'
+        ,'num_shells'
+        ,'num_access_files'
+        ,'num_outbound_cmds'
+        ,'is_host_login'
+        ,'is_guest_login'
+        ,'count'
+        ,'srv_count'
+        ,'serror_rate'
+        ,'srv_serror_rate'
+        ,'rerror_rate'
+        ,'srv_rerror_rate'
+        ,'same_srv_rate'
+        ,'diff_srv_rate'
+        ,'srv_diff_host_rate'
+        ,'dst_host_count'
+        ,'dst_host_srv_count'
+        ,'dst_host_same_srv_rate'
+        ,'dst_host_diff_srv_rate'
+        ,'dst_host_same_src_port_rate'
+        ,'dst_host_srv_diff_host_rate'
+        ,'dst_host_serror_rate'
+        ,'dst_host_srv_serror_rate'
+        ,'dst_host_rerror_rate'
+        ,'dst_host_srv_rerror_rate'
+        ,'attack'
+        ,'level1'])
+        df.columns = columns
+        features_to_encode = ['protocol_type', 'service', 'flag']
+        encoded_train = pd.get_dummies(df[features_to_encode])
+
+        duration = request.POST['duration']
+        protocol = request.POST['protocol']
+        service = request.POST['service']
+        flag = request.POST['flag']
+        src_bytes = request.POST['src_bytes']
+        dst_bytes = request.POST['dst_bytes']
+        print(duration, protocol, service, flag, src_bytes, dst_bytes)
+        df_pred = pd.DataFrame({'duration': [duration], 'protocol_type': [protocol], 'service': [service], 'flag': [flag], 'src_bytes': [src_bytes], 'dst_bytes': [dst_bytes]})
+        features_to_encode = ['protocol_type', 'service', 'flag']
+        encoded_df = pd.get_dummies(df_pred[features_to_encode])
+        missing_cols = set(encoded_train.columns) - set(encoded_df.columns)
+        for c in missing_cols:
+            encoded_df[c] = 0
+        encoded_df = encoded_df[encoded_train.columns]
+        
+        numeric_features = ['duration', 'src_bytes', 'dst_bytes']
+        X_pred = encoded_df.join(df_pred[numeric_features])
+        model = pd.read_pickle(r"./model.pickle")
+        pred = model.predict(X_pred)
+        if pred == 0:
+            result = 'Normal'
+        elif pred == 1:
+            result = 'DoS attack'
+        elif pred == 2:
+            result = 'Probe attack'
+        elif pred == 3:
+            result = 'Privilege attack'
+        else:
+            result = 'Access attack'
+        context = {'pred': result}
+    return render(request, 'pages/predict.html', context)

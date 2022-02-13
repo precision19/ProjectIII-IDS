@@ -36,33 +36,33 @@
     <div class="row justify-content-md-center">
         <div class="col-md-4" style="color:#fff;">
             <h1>IDS Prediction</h1>
-            <form action="" id="post-form">
+            <form action="" id="post-form", method = "post">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="duration">duration</label>
-                    <input type="number" step="0.1" class="form-control" id="duration" placeholder="" required>
+                    <input type="number" step="0.1" class="form-control" name="duration" placeholder="" required>
                 </div>
                 <div class="form-group">
                     <label for="protocol">protocol</label>
-                    <input type="text" step="0.1" class="form-control" id="protocol" placeholder="" required>
+                    <input type="text" step="0.1" class="form-control" name="protocol" placeholder="" required>
                 </div>
                 <div class="form-group">
                     <label for="service">service</label>
-                    <input type="text" step="0.1" class="form-control" id="service" placeholder="" required>
+                    <input type="text" step="0.1" class="form-control" name="service" placeholder="" required>
                 </div>
                 <div class="form-group">
                     <label for="flag">flag</label>
-                    <input type="text" step="0.1" class="form-control" id="flag" placeholder="" required>
+                    <input type="text" step="0.1" class="form-control" name="flag" placeholder="" required>
                 </div>
 
                 <div class="form-group">
                     <label for="src_bytes">src_bytes</label>
-                    <input type="number" step="0.1" class="form-control" id="src_bytes" placeholder="" required>
+                    <input type="number" step="0.1" class="form-control" name="src_bytes" placeholder="" required>
                 </div>
 
                 <div class="form-group">
                     <label for="dst_bytes">dst_bytes</label>
-                    <input type="number" step="0.1" class="form-control" id="dst_bytes" placeholder="" required>
+                    <input type="number" step="0.1" class="form-control" name="dst_bytes" placeholder="" required>
                 </div>
 
                 <button type="submit" value="Submit" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Submit</button>
@@ -71,36 +71,8 @@
     </div>
 </div>
 
-<script>
-    $(document).on('submit', '#post-form',function(e){
-        e.preventDefault();
-        $.ajax({
-            type:'POST',
-            url:'{% url "predict" %}',
-            data:{
-                duration:$('#duration').val(),
-                protocol:$('#protocol').val(),
-                service:$('#service').val(),
-                flag:$('#flag').val(),
-                src_bytes:$('#src_bytes').val(),
-                dst_bytes:$('#dst_bytes').val(),
-                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-                action: 'post'
-            },  
-            success:function(json) {
-                document.forms["post-form"].reset();
-                document.getElementById("prediction").innerHTML = json['result']
-                document.getElementById("dr").innerHTML = json['protocol']
-                document.getElementById("pr").innerHTML = json['service']
-                document.getElementById("se").innerHTML = json['service']
-                document.getElementById("fl").innerHTML = json['flag']
-                document.getElementById("sr").innerHTML = json['src_bytes']
-                document.getElementById("ds").innerHTML = json['dst_bytes']
-            },
-            error : function(xhr,errmsg,err) {
+{% if pred %}
+<h1 style = "color: #fff">This is predict: {{pred}}</h1>
+{% endif %}
 
-            }
-        });
-    })
-</script>
 {% endblock %}
